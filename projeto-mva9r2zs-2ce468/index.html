@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberForge | Interface Generator</title>
+    <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-blue: #00f2ff;
+            --bg-dark: #0a0a0c;
+            --panel-bg: rgba(20, 20, 25, 0.9);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-dark);
+            color: #fff;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 300px;
+            background: var(--panel-bg);
+            border-right: 2px solid var(--neon-blue);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Main Area */
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle, #1a1a2e 0%, #0a0a0c 100%);
+        }
+
+        .canvas {
+            width: 80%;
+            height: 80%;
+            border: 4px solid var(--neon-pink);
+            position: relative;
+            box-shadow: 0 0 20px var(--neon-pink);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Buttons & UI */
+        button {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: var(--neon-blue);
+            color: black;
+        }
+
+        h1 { color: var(--neon-pink); text-transform: uppercase; }
+
+        .preset-card {
+            padding: 10px;
+            border: 1px solid #444;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .preset-card:hover { border-color: var(--neon-pink); }
+    </style>
+</head>
+<body>
+
+<aside>
+    <h1>CyberForge</h1>
+    <div id="controls">
+        <h3>Modelos</h3>
+        <div class="preset-card" onclick="loadPreset('hacker')">Modo Hacker</div>
+        <div class="preset-card" onclick="loadPreset('corp')">Modo Corporativo</div>
+        <div class="preset-card" onclick="loadPreset('glitch')">Modo Glitch</div>
+    </div>
+    <hr style="width:100%; border: 0; border-top: 1px solid #333;">
+    <button onclick="clearCanvas()">Limpar Canvas</button>
+</aside>
+
+<main>
+    <div class="canvas" id="canvas">
+        <h2 id="title">Selecione um Modelo</h2>
+        <p id="content">Use o painel lateral para carregar componentes visuais.</p>
+    </div>
+</main>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const title = document.getElementById('title');
+    const content = document.getElementById('content');
+
+    function loadPreset(type) {
+        if (type === 'hacker') {
+            canvas.style.borderColor = '#00ff41';
+            canvas.style.boxShadow = '0 0 20px #00ff41';
+            title.innerText = 'SISTEMA INVASOR';
+            content.innerText = 'root@cybernet:~$ executando payload...\nstatus: conectado\nfirewall: bypassado';
+            canvas.style.color = '#00ff41';
+        } 
+        else if (type === 'corp') {
+            canvas.style.borderColor = '#ffffff';
+            canvas.style.boxShadow = '0 0 20px #ffffff';
+            title.innerText = 'ARASAKA-DATA';
+            content.innerText = 'Acesso de Administrador Autorizado.\nBem-vindo, Operativo 77.';
+            canvas.style.color = '#ffffff';
+        }
+        else if (type === 'glitch') {
+            canvas.style.borderColor = '#ff00ff';
+            canvas.style.boxShadow = '0 0 50px #ff00ff';
+            title.innerText = 'ERROR_404_VOID';
+            content.innerText = 'SYSTEM FAILURE // MEMORY LEAK\n[REBOOTING...]';
+            canvas.style.color = '#ff00ff';
+        }
+        
+        // Save to local storage for demo
+        localStorage.setItem('lastCyberPreset', type);
+    }
+
+    function clearCanvas() {
+        canvas.style.borderColor = '#ff00ff';
+        canvas.style.boxShadow = '0 0 20px #ff00ff';
+        title.innerText = 'Canvas Limpo';
+        content.innerText = 'Aguardando novos dados...';
+        canvas.style.color = '#fff';
+    }
+
+    // Load initial state if exists
+    window.onload = () => {
+        const last = localStorage.getItem('lastCyberPreset');
+        if (last) loadPreset(last);
+    }
+</script>
+
+</body>
+</html>
