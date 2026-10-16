@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamLink - Compartilhador de Vídeos</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { max-width: 800px; width: 100%; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: var(--primary); }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
+        #previewArea { margin-top: 20px; padding: 20px; border: 2px dashed #ddd; display: none; }
+        .hidden { display: none; }
+        .link-box { background: #eef2ff; padding: 15px; border-radius: 6px; word-break: break-all; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainApp">
+    <h1>StreamLink 🎥</h1>
+    <p>Cole a URL de um vídeo (MP4) para gerar um link de compartilhamento local.</p>
+    
+    <input type="url" id="videoUrl" placeholder="https://exemplo.com/video.mp4">
+    <button onclick="gerarLink()">Gerar Link de Compartilhamento</button>
+
+    <div id="resultado" class="hidden">
+        <h3>Link gerado com sucesso:</h3>
+        <div class="link-box" id="linkOutput" onclick="abrirVideo()"></div>
+        <p><small>* Clique no link acima para abrir na aba de visualização (simulação local)</small></p>
+    </div>
+</div>
+
+<div class="container hidden" id="viewApp">
+    <h1>Visualizador de Vídeo</h1>
+    <video id="player" controls width="100%"></video>
+    <br><br>
+    <button onclick="window.location.reload()">Voltar ao Início</button>
+</div>
+
+<script>
+    function gerarLink() {
+        const url = document.getElementById('videoUrl').value;
+        if (!url) return alert('Por favor, insira uma URL');
+        
+        // Simulação de "URL" codificada em base64 para o roteamento fictício
+        const encoded = btoa(url);
+        const baseUrl = window.location.origin + window.location.pathname;
+        const finalUrl = `${baseUrl}?v=${encoded}`;
+        
+        document.getElementById('resultado').classList.remove('hidden');
+        document.getElementById('linkOutput').innerText = finalUrl;
+        
+        // Salva no localStorage para simular persistência
+        localStorage.setItem('tempVideo', url);
+    }
+
+    function abrirVideo() {
+        const url = localStorage.getItem('tempVideo');
+        if (url) {
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('viewApp').classList.remove('hidden');
+            const player = document.getElementById('player');
+            player.src = url;
+            player.play();
+        }
+    }
+
+    // Ao carregar a página, verifica se há um parâmetro de vídeo na URL
+    window.onload = () => {
+        const params = new URLSearchParams(window.location.search);
+        const encoded = params.get('v');
+        if (encoded) {
+            try {
+                const url = atob(encoded);
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('viewApp').classList.remove('hidden');
+                document.getElementById('player').src = url;
+            } catch(e) { console.error("URL inválida"); }
+        }
+    };
+</script>
+
+</body>
+</html>
