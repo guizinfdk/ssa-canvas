@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStream Demo - Catálogo de Entretenimento</title>
+    <style>
+        :root {
+            --primary: #e50914;
+            --dark: #141414;
+            --light: #ffffff;
+            --gray: #808080;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+        }
+        .logo { color: var(--primary); font-size: 24px; font-weight: bold; }
+        .hero {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 5%;
+            background: #222;
+            text-align: left;
+        }
+        .container { padding: 40px 5%; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            background: #2f2f2f;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .card:hover { transform: scale(1.05); }
+        .card img { width: 100%; height: 300px; object-fit: cover; }
+        .card-info { padding: 15px; }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">CINESTREAM</div>
+    <nav>
+        <button onclick="alert('Funcionalidade de Login Demonstrativa')">Entrar</button>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Assista Filmes e Séries</h1>
+    <p>Protótipo de interface demonstrativa de catálogo.</p>
+    <button style="width: 200px;">Ver catálogo</button>
+</section>
+
+<div class="container">
+    <h2>Catálogo em Destaque</h2>
+    <div class="grid" id="catalogo"></div>
+</div>
+
+<div class="modal" id="modalPlayer">
+    <div style="background: #000; padding: 20px; border-radius: 8px; width: 80%; text-align: center;">
+        <h2 id="modalTitle">Nome do Filme</h2>
+        <div style="width: 100%; height: 400px; background: #333; display: flex; align-items: center; justify-content: center;">
+            <p>Simulador de Player de Vídeo</p>
+        </div>
+        <button onclick="fecharModal()" style="margin-top: 20px;">Fechar</button>
+    </div>
+</div>
+
+<script>
+    const filmes = [
+        { id: 1, titulo: "Exemplo de Filme 1", capa: "https://via.placeholder.com/200x300?text=Filme+1" },
+        { id: 2, titulo: "Exemplo de Série 1", capa: "https://via.placeholder.com/200x300?text=Série+1" },
+        { id: 3, titulo: "Exemplo de Filme 2", capa: "https://via.placeholder.com/200x300?text=Filme+2" },
+        { id: 4, titulo: "Exemplo de Série 2", capa: "https://via.placeholder.com/200x300?text=Série+2" }
+    ];
+
+    function renderizarCatalogo() {
+        const container = document.getElementById('catalogo');
+        filmes.forEach(f => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${f.capa}" alt="${f.titulo}">
+                <div class="card-info">
+                    <h3>${f.titulo}</h3>
+                    <button onclick="abrirModal('${f.titulo}')">Assistir</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function abrirModal(titulo) {
+        document.getElementById('modalTitle').innerText = titulo;
+        document.getElementById('modalPlayer').style.display = 'flex';
+    }
+
+    function fecharModal() {
+        document.getElementById('modalPlayer').style.display = 'none';
+    }
+
+    // Inicialização
+    renderizarCatalogo();
+</script>
+
+</body>
+</html>
