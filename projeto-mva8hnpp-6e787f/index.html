@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureLink | Proteção de Acesso</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            box-sizing: border-box;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        .hidden { display: none; }
+        #status { margin-top: 1rem; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <h1>SecureLink</h1>
+    <p>Proteja seu destino. O acesso requer verificação de token.</p>
+    
+    <div id="step1">
+        <input type="text" id="urlInput" placeholder="URL de destino (ex: https://site.com)">
+        <button onclick="generateLink()">Gerar Link Protegido</button>
+    </div>
+
+    <div id="step2" class="hidden">
+        <p>Compartilhe este link:</p>
+        <code id="protectedUrl" style="background:#000; padding:10px; display:block; margin:10px 0; word-break:break-all;"></code>
+        <button onclick="copyLink()">Copiar</button>
+    </div>
+</div>
+
+<script>
+    function generateLink() {
+        const url = document.getElementById('urlInput').value;
+        if (!url) return alert('Insira uma URL');
+        
+        const token = btoa(url); // Simulação de hash base64
+        const host = window.location.origin + window.location.pathname;
+        const finalLink = `${host}?token=${token}`;
+        
+        document.getElementById('protectedUrl').innerText = finalLink;
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+    }
+
+    function copyLink() {
+        navigator.clipboard.writeText(document.getElementById('protectedUrl').innerText);
+        alert('Copiado!');
+    }
+
+    // Lógica de verificação na inicialização
+    window.onload = () => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        
+        if (token) {
+            document.body.innerHTML = `
+                <div class="container">
+                    <h2>Verificação de Segurança</h2>
+                    <p>O acesso direto foi bloqueado para evitar bots.</p>
+                    <button id="verifyBtn">Liberar Acesso (Verificar humano)</button>
+                </div>
+            `;
+            
+            document.getElementById('verifyBtn').onclick = () => {
+                try {
+                    const originalUrl = atob(token);
+                    document.body.innerHTML = `
+                        <div class="container">
+                            <h2>Acesso Permitido</h2>
+                            <p>Redirecionando para: ${originalUrl.substring(0, 20)}...</p>
+                            <button onclick="window.location.href='${originalUrl}'">Ir agora</button>
+                        </div>
+                    `;
+                } catch(e) {
+                    alert("Token inválido ou corrompido");
+                }
+            };
+        }
+    };
+</script>
+
+</body>
+</html>
