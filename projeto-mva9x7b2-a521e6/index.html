@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberForge | Interface Neural Architect</title>
+    <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-blue: #00f3ff;
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 25, 0.9);
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-dark);
+            color: var(--neon-blue);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            border-bottom: 2px solid var(--neon-pink);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .sidebar {
+            background: var(--panel-bg);
+            padding: 20px;
+            border: 1px solid var(--neon-blue);
+        }
+
+        .canvas-area {
+            background: #111;
+            border: 1px solid var(--neon-pink);
+            padding: 20px;
+            position: relative;
+        }
+
+        .model-card {
+            padding: 10px;
+            border: 1px solid #333;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .model-card:hover {
+            border-color: var(--neon-pink);
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        button {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+        }
+
+        button:hover {
+            background: var(--neon-blue);
+            color: black;
+        }
+
+        #output-area {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            color: #0f0;
+            padding: 10px;
+            border: 1px solid #444;
+            overflow-y: auto;
+        }
+
+        .status-bar {
+            padding: 10px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>CYBER_FORGE v1.0</h1>
+        <div>[ STATUS: NEURAL SYNC ACTIVE ]</div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>TEMPLATES</h3>
+            <div class="model-card" onclick="loadTemplate('cyber_dark')">DARK GRID UI</div>
+            <div class="model-card" onclick="loadTemplate('neon_glow')">NEON GLOW DASH</div>
+            <div class="model-card" onclick="loadTemplate('holographic')">HOLO-SYSTEM</div>
+            
+            <h3 style="margin-top: 30px;">IA INTEGRATION</h3>
+            <button onclick="simulateAI('DEEPSEEK')">SYNC DEEPSEEK</button>
+            <button onclick="simulateAI('GEMINI')" style="margin-top:10px">SYNC GEMINI</button>
+        </aside>
+
+        <main class="canvas-area">
+            <h3>PREVIEW AREA</h3>
+            <div id="output-area">Selecione um modelo ou sincronize uma IA para iniciar...</div>
+        </main>
+    </div>
+
+    <div class="status-bar">
+        CONNECTED TO LOCAL NODE: 127.0.0.1 | SESSION: ID_9982X
+    </div>
+
+    <script>
+        function loadTemplate(type) {
+            const output = document.getElementById('output-area');
+            const styles = {
+                'cyber_dark': '<div style="background:#000; color:#fff; padding:20px; border: 1px solid #333;"><h2>System Error</h2><p>Connection Lost</p></div>',
+                'neon_glow': '<div style="box-shadow: 0 0 20px #0ff; border: 2px solid #0ff; padding:20px;"><h2>NEON_UI</h2><p>Data Streaming...</p></div>',
+                'holographic': '<div style="background: rgba(0,255,255,0.1); border-left: 5px solid #0ff; padding:20px;"><h2>HOLO_LINK</h2><p>Secure Connection</p></div>'
+            };
+            output.innerHTML = styles[type] || "Erro de carregamento.";
+        }
+
+        function simulateAI(provider) {
+            const output = document.getElementById('output-area');
+            output.innerHTML = `> Inciando handshake com ${provider} AI...<br>> Autenticando...<br>> Resposta gerada: "Interface Neural Otimizada carregada com sucesso via protocolo ${provider}."`;
+            
+            // Simulação de efeito de digitação
+            let text = output.innerHTML;
+            output.innerHTML = "";
+            let i = 0;
+            const interval = setInterval(() => {
+                output.innerHTML += text.charAt(i);
+                i++;
+                if (i >= text.length) clearInterval(interval);
+            }, 20);
+        }
+    </script>
+</body>
+</html>
