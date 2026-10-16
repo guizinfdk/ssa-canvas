@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Entidades da Umbanda</title>
+    <style>
+        :root {
+            --ouro: #d4af37;
+            --branco: #ffffff;
+            --fundo: #f4f4f9;
+            --texto: #333;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--fundo);
+            color: var(--texto);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #2c3e50;
+            color: var(--ouro);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 5px solid var(--ouro);
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .card {
+            background: var(--branco);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border: 1px solid var(--ouro);
+        }
+        .tag {
+            font-size: 0.8rem;
+            color: var(--ouro);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Linhas e Entidades da Umbanda</h1>
+    <p>Um guia referencial das correntes energéticas</p>
+</header>
+
+<div class="container">
+    <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar entidade ou linha (ex: Preto Velho, Caboclo)..." onkeyup="filtrar()">
+    
+    <div id="entidadesGrid" class="grid">
+        <!-- Itens inseridos via JavaScript -->
+    </div>
+</div>
+
+<footer>
+    <p>Nota: Esta é uma lista demonstrativa e educacional sobre a diversidade das linhas de trabalho na Umbanda.</p>
+</footer>
+
+<script>
+    const entidades = [
+        { nome: "Pai Benedito", linha: "Preto Velho" },
+        { nome: "Vovó Maria Conga", linha: "Preto Velho" },
+        { nome: "Pai Joaquim", linha: "Preto Velho" },
+        { nome: "Caboclo Pena Branca", linha: "Caboclo" },
+        { nome: "Caboclo Sete Flechas", linha: "Caboclo" },
+        { nome: "Cabocla Jurema", linha: "Caboclo" },
+        { nome: "Exu Tranca Ruas", linha: "Exu" },
+        { nome: "Exu Marabô", linha: "Exu" },
+        { nome: "Maria Padilha", linha: "Pombagira" },
+        { nome: "Maria Mulambo", linha: "Pombagira" },
+        { nome: "Baiano Zé do Coco", linha: "Baiano" },
+        { nome: "Baiano Mané do Berimbau", linha: "Baiano" },
+        { nome: "Marinheiro Martim Pescador", linha: "Marinheiro" },
+        { nome: "Criança Cosme", linha: "Erê" },
+        { nome: "Criança Damião", linha: "Erê" },
+        { nome: "Boiadeiro Zé do Laço", linha: "Boiadeiro" },
+        { nome: "Mestre Irineu", linha: "Mestre" }
+    ];
+
+    function renderizar(lista) {
+        const grid = document.getElementById('entidadesGrid');
+        grid.innerHTML = '';
+        lista.forEach(ent => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<span class="tag">${ent.linha}</span><strong>${ent.nome}</strong>`;
+            grid.appendChild(card);
+        });
+    }
+
+    function filtrar() {
+        const termo = document.getElementById('searchInput').value.toLowerCase();
+        const filtrados = entidades.filter(e => 
+            e.nome.toLowerCase().includes(termo) || 
+            e.linha.toLowerCase().includes(termo)
+        );
+        renderizar(filtrados);
+    }
+
+    // Inicialização
+    renderizar(entidades);
+</script>
+
+</body>
+</html>
