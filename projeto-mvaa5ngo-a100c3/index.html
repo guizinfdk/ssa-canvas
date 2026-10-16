@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador Pro de Sensibilidade</title>
+    <style>
+        :root { --primary: #6366f1; --dark: #1e293b; --light: #f8fafc; }
+        body { font-family: sans-serif; background: var(--dark); color: var(--light); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 600px; background: #334155; padding: 20px; border-radius: 15px; box-shadow: 0 10px 15px rgba(0,0,0,0.3); }
+        h1, h2 { text-align: center; color: #818cf8; }
+        select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; }
+        button { background: var(--primary); color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #4f46e5; }
+        #resultado { margin-top: 20px; padding: 15px; background: #475569; border-radius: 8px; display: none; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Gerador Pro Sensi</h1>
+    
+    <label>Marca do Celular:</label>
+    <select id="marca">
+        <option value="Samsung">Samsung</option>
+        <option value="Xiaomi">Xiaomi</option>
+        <option value="iPhone">iPhone</option>
+        <option value="Motorola">Motorola</option>
+        <option value="Realme">Realme</option>
+    </select>
+
+    <label>Influencer:</label>
+    <select id="famoso">
+        <option value="Nobru">Nobru</option>
+        <option value="Cerol">Cerol</option>
+        <option value="Two9">Two9</option>
+        <option value="Babi">Babi</option>
+    </select>
+
+    <label>Quantidade de Botões (HUD):</label>
+    <select id="botoes">
+        <option value="2">2 Botões</option>
+        <option value="3">3 Botões</option>
+        <option value="4">4 Botões</option>
+        <option value="5">5 Botões</option>
+        <option value="6">6 Botões</option>
+    </select>
+
+    <button onclick="gerarSensi()">Gerar Minha Sensi</button>
+
+    <div id="resultado">
+        <h2 id="tituloRes"></h2>
+        <p id="corpoRes"></p>
+    </div>
+</div>
+
+<script>
+    function gerarSensi() {
+        const marca = document.getElementById('marca').value;
+        const famoso = document.getElementById('famoso').value;
+        const botoes = document.getElementById('botoes').value;
+        
+        const dpi = {
+            "Samsung": "600 - 750",
+            "Xiaomi": "500 - 650",
+            "iPhone": "Padrão (Sem DPI)",
+            "Motorola": "550 - 700",
+            "Realme": "500 - 600"
+        };
+
+        const sensis = {
+            "Geral": Math.floor(Math.random() * (100 - 80) + 80),
+            "RedDot": Math.floor(Math.random() * (100 - 70) + 70),
+            "Mira2x": Math.floor(Math.random() * (100 - 60) + 60),
+            "Mira4x": Math.floor(Math.random() * (100 - 50) + 50)
+        };
+
+        const divRes = document.getElementById('resultado');
+        document.getElementById('tituloRes').innerText = `Configuração de ${famoso}`;
+        document.getElementById('corpoRes').innerHTML = `
+            <strong>Dispositivo:</strong> ${marca}<br>
+            <strong>DPI Recomendada:</strong> ${dpi[marca]}<br>
+            <strong>Geral:</strong> ${sensis.Geral} | <strong>Red Dot:</strong> ${sensis.RedDot}<br>
+            <strong>Mira 2x:</strong> ${sensis.Mira2x} | <strong>Mira 4x:</strong> ${sensis.Mira4x}<br>
+            <strong>Layout:</strong> Otimizado para ${botoes} botões na tela.<br>
+            <small>Dica: Limpe o cache do jogo após aplicar.</small>
+        `;
+        
+        divRes.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
