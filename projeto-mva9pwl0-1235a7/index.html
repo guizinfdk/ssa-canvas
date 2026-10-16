@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberForge | Interface Generator</title>
+    <style>
+        :root {
+            --neon-pink: #ff00ff;
+            --neon-blue: #00f3ff;
+            --bg-dark: #0a0a0c;
+            --panel-bg: rgba(20, 20, 25, 0.8);
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-dark);
+            color: #fff;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 300px;
+            background: var(--panel-bg);
+            border-right: 2px solid var(--neon-blue);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Main Area */
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle, #1a1a2e 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .preview-box {
+            width: 80%;
+            height: 60vh;
+            border: 4px solid var(--neon-pink);
+            box-shadow: 0 0 20px var(--neon-pink);
+            background: black;
+            position: relative;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        button {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: var(--neon-blue);
+            color: black;
+        }
+
+        .cyber-text { text-shadow: 0 0 5px var(--neon-pink); }
+
+        .ui-component {
+            margin: 10px;
+            padding: 10px;
+            border: 1px dashed #555;
+            cursor: grab;
+        }
+    </style>
+</head>
+<body>
+
+<aside>
+    <h2 class="cyber-text">CYBERFORGE v1.0</h2>
+    <p>Selecione um layout:</p>
+    <button onclick="applyTheme('neo-tokyo')">Neo Tokyo Layout</button>
+    <button onclick="applyTheme('glitch-net')">Glitch Net Layout</button>
+    <button onclick="applyTheme('hacker-core')">Hacker Core Layout</button>
+    <hr style="width: 100%; border: 0; border-top: 1px solid #333;">
+    <div id="elements-pallete">
+        <div class="ui-component" onclick="addElement('H1')">ADICIONAR TÍTULO</div>
+        <div class="ui-component" onclick="addElement('BTN')">ADICIONAR BOTÃO</div>
+    </div>
+</aside>
+
+<main>
+    <div class="preview-box" id="canvas">
+        <h1 id="title-preview">Bem-vindo, Netrunner</h1>
+        <div id="elements-container"></div>
+    </div>
+    <p style="margin-top: 20px;">Use o painel lateral para prototipar seu layout.</p>
+</main>
+
+<script>
+    function applyTheme(theme) {
+        const canvas = document.getElementById('canvas');
+        const title = document.getElementById('title-preview');
+        
+        canvas.style.boxShadow = "0 0 20px var(--neon-blue)";
+        
+        if(theme === 'neo-tokyo') {
+            canvas.style.borderColor = "#ff00ff";
+            title.style.color = "#ff00ff";
+            canvas.style.background = "linear-gradient(to bottom, #110011, #000)";
+        } else if(theme === 'glitch-net') {
+            canvas.style.borderColor = "#00ff00";
+            title.style.color = "#00ff00";
+            canvas.style.background = "#050505";
+        } else {
+            canvas.style.borderColor = "#fff";
+            title.style.color = "#fff";
+            canvas.style.background = "transparent";
+        }
+    }
+
+    function addElement(type) {
+        const container = document.getElementById('elements-container');
+        const el = document.createElement(type === 'H1' ? 'h2' : 'button');
+        
+        if(type === 'H1') {
+            el.innerText = "NOVO MÓDULO DE DADOS";
+            el.style.color = "var(--neon-blue)";
+        } else {
+            el.innerText = "ACESSAR SISTEMA";
+            el.style.display = "block";
+            el.style.marginTop = "10px";
+        }
+        
+        container.appendChild(el);
+    }
+</script>
+
+</body>
+</html>
