@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamHub - Protótipo de Vídeos</title>
+    <style>
+        :root {
+            --primary: #e50914;
+            --dark: #141414;
+            --light: #ffffff;
+            --gray: #333;
+        }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background-color: var(--dark);
+            color: var(--light);
+        }
+        header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.8);
+        }
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), #222;
+        }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 2rem;
+        }
+        .video-card {
+            background: var(--gray);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .video-card:hover { transform: scale(1.05); }
+        .thumbnail { width: 100%; height: 160px; background: #444; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .info { padding: 1rem; }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #player-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>STREAMHUB</h1>
+    <nav>Início | Filmes | Séries</nav>
+</header>
+
+<section class="hero">
+    <h1>Bem-vindo ao StreamHub</h1>
+    <p>O protótipo de plataforma de streaming mais rápido da web.</p>
+</section>
+
+<main class="video-grid" id="video-container"></main>
+
+<div id="player-modal">
+    <h2 id="video-title">Título do Vídeo</h2>
+    <div style="width: 80%; height: 400px; background: #000; border: 2px solid white; display: flex; align-items: center; justify-content: center;">
+        [Área de Reprodução Simulada]
+    </div>
+    <br>
+    <button onclick="fecharPlayer()">Fechar</button>
+</div>
+
+<script>
+    const videos = [
+        { id: 1, titulo: "Natureza Selvagem", duracao: "12:30" },
+        { id: 2, titulo: "Viagem Espacial", duracao: "45:00" },
+        { id: 3, titulo: "Cozinhando com Amor", duracao: "08:15" },
+        { id: 4, titulo: "Tecnologia do Amanhã", duracao: "22:40" },
+        { id: 5, titulo: "História Antiga", duracao: "55:10" },
+        { id: 6, titulo: "Tutoriais de Código", duracao: "15:00" }
+    ];
+
+    const container = document.getElementById('video-container');
+    const modal = document.getElementById('player-modal');
+    const titleDisplay = document.getElementById('video-title');
+
+    function renderizarVideos() {
+        videos.forEach(video => {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.innerHTML = `
+                <div class="thumbnail">▶</div>
+                <div class="info">
+                    <h3>${video.titulo}</h3>
+                    <p>${video.duracao}</p>
+                    <button onclick="abrirPlayer('${video.titulo}')">Assistir</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function abrirPlayer(titulo) {
+        titleDisplay.innerText = titulo;
+        modal.style.display = 'flex';
+    }
+
+    function fecharPlayer() {
+        modal.style.display = 'none';
+    }
+
+    renderizarVideos();
+</script>
+
+</body>
+</html>
