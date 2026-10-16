@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface de Demonstração - Mensagem</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .avatar-placeholder {
+            width: 120px;
+            height: 120px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 4px solid var(--primary);
+        }
+        .chat-bubble {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-style: italic;
+            border-left: 4px solid var(--primary);
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="avatar-placeholder">👤</div>
+        <h2 id="name-display">Interlocutor</h2>
+        <div class="chat-bubble" id="message-box">
+            "Aguardando interação..."
+        </div>
+        <button onclick="interagir()">Falar com ele</button>
+    </div>
+
+    <script>
+        function interagir() {
+            const nameDisplay = document.getElementById('name-display');
+            const messageBox = document.getElementById('message-box');
+            
+            // Simulação de interface
+            nameDisplay.innerText = "Sr. Killer";
+            messageBox.innerText = "Oi, Sr. Killer! Tudo bem?";
+            
+            // Armazenamento local demonstrativo
+            localStorage.setItem('last_interaction', 'Oi Sr e killer');
+            
+            console.log("Interação registrada na memória local.");
+        }
+    </script>
+</body>
+</html>
