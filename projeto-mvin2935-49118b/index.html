@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuaObfuscator Pro - Ofuscador de Código Lua & Luau</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #090d16;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--text-main);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--accent);
+        }
+
+        main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        @media(max-width: 900px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar de Configurações */
+        .sidebar {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .option-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .option-group label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            user-select: none;
+        }
+
+        .option-group label:hover {
+            color: var(--text-main);
+        }
+
+        .option-group input[type="checkbox"] {
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-preset {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-preset:hover, .btn-preset.active {
+            border-color: var(--accent);
+            color: var(--text-main);
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        /* Área de Editor / Codificação */
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .editors-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            min-height: 450px;
+        }
+
+        @media(max-width: 768px) {
+            .editors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-pane {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .pane-header {
+            background-color: var(--bg-card);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .pane-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: var(--border);
+            color: var(--text-main);
+        }
+
+        textarea {
+            flex: 1;
+            background-color: transparent;
+            border: none;
+            color: var(--text-main);
+            padding: 1rem;
+            resize: none;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        /* Barra de Ações Inferior */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-secondary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stats {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stats span strong {
+            color: var(--text-main);
+        }
+
+        .btn-obfuscate {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-obfuscate:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-obfuscate:active {
+            transform: scale(0.98);
+        }
+
+        /* Modal / Notificações Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--success);
+            color: var(--text-main);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            background-color: var(--bg-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            ⚡ Lua<span>Obfuscator</span>
+        </div>
+        <nav class="nav-links">
+            <a href="#" class="active">Editor</a>
+            <a href="#" onclick="alert('Funcionalidade demonstrativa de API. Utilize a interface web.')">API</a>
+            <a href="#" onclick="alert('LuaObfuscator v2.5 Pro - Proteção Avançada para Lua e Luau.')">Sobre</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Painel de Configurações -->
+        <aside class="sidebar">
+            <h2>Presets</h2>
+            <div class="preset-buttons">
+                <button class="btn-preset active" onclick="setPreset('safe')">Seguro</button>
+                <button class="btn-preset" onclick="setPreset('balanced')">Balanceado</button>
+                <button class="btn-preset" onclick="setPreset('maximum')">Extremo</button>
+                <button class="btn-preset" onclick="setPreset('custom')">Personalizado</button>
+            </div>
+
+            <h2>Opções de Ofuscação</h2>
+            
+            <div class="option-group">
+                <label>
+                    Renomear Variáveis
+                    <input type="checkbox" id="opt-vars" checked>
+                </label>
+            </div>
+            
+            <div class="option-group">
+                <label>
+                    Emulação de Máquina Virtual
+                    <input type="checkbox" id="opt-vm" checked>
+                </label>
+            </div>
+
+            <div class="option-group">
+                <label>
+                    Criptografia de Strings
+                    <input type="checkbox" id="opt-strings" checked>
+                </label>
+            </div>
+
+            <div class="option-group">
+                <label>
+                    Embaralhar Controle de Fluxo
+                    <input type="checkbox" id="opt-flow">
+                </label>
+            </div>
+
+            <div class="option-group">
+                <label>
+                    Remover Comentários
+                    <input type="checkbox" id="opt-comments" checked>
+                </label>
+            </div>
+
+            <div class="option-group">
+                <label>
+                    Adicionar Anti-Tamper
+                    <input type="checkbox" id="opt-tamper">
+                </label>
+            </div>
+        </aside>
+
+        <!-- Área de Trabalho -->
+        <section class="workspace">
+            <div class="editors-grid">
+                <!-- Entrada -->
+                <div class="editor-pane">
+                    <div class="pane-header">
+                        <span>Código Original (Lua / Luau)</span>
+                        <div class="pane-actions">
+                            <button class="icon-btn" onclick="loadSample()" title="Carregar Exemplo">Exemplo</button>
+                            <button class="icon-btn" onclick="clearInput()" title="Limpar">Limpar</button>
+                        </div>
+                    </div>
+                    <textarea id="input-code" placeholder="Cole seu código Lua ou Luau aqui..."></textarea>
+                </div>
+
+                <!-- Saída -->
+                <div class="editor-pane">
+                    <div class="pane-header">
+                        <span>Código Ofuscado</span>
+                        <div class="pane-actions">
+                            <button class="icon-btn" onclick="copyOutput()" title="Copiar Código">Copiar</button>
+                        </div>
+                    </div>
+                    <textarea id="output-code" readonly placeholder="O código protegido aparecerá aqui..."></textarea>
+                </div>
+            </div>
+
+            <!-- Rodapé do Workspace -->
+            <div class="action-bar">
+                <div class="stats" id="stats-area">
+                    <span>Linhas: <strong id="stat-lines">0</strong></span>
+                    <span>Tamanho: <strong id="stat-size">0 B</strong></span>
+                </div>
+                <button class="btn-obfuscate" onclick="obfuscateCode()">Ofuscar Código</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notificação Toast -->
+    <div class="toast" id="toast">
+        <span>✅ Código ofuscado e copiado com sucesso!</span>
+    </div>
+
+    <footer>
+        &copy; 2026 LuaObfuscator Pro. Todos os direitos reservados. Feito para desenvolvedores Lua/Luau.
+    </footer>
+
+    <script>
+        // Amostra Inicial
+        const sampleCode = `-- Exemplo de script Luau
+local playerName = "Desenvolvedor"
+local score = 100
+
+local function calcularBonus(pontos)
+    local multiplicador = 1.5
+    return pontos * multiplicador
+end
+
+print("Bem-vindo, " .. playerName .. "!")
+print("Pontuação final com bônus:", calcularBonus(score))`;
+
+        document.getElementById('input-code').value = sampleCode;
+        updateStats(sampleCode);
+
+        // Atualizar estatísticas ao digitar
+        document.getElementById('input-code').addEventListener('input', (e) => {
+            updateStats(e.target.value);
+        });
+
+        function updateStats(text) {
+            const lines = text ? text.split('\n').length : 0;
+            const size = new Blob([text]).size;
+            document.getElementById('stat-lines').innerText = lines;
+            document.getElementById('stat-size').innerText = size + ' B';
+        }
+
+        function loadSample() {
+            document.getElementById('input-code').value = sampleCode;
+            updateStats(sampleCode);
+        }
+
+        function clearInput() {
+            document.getElementById('input-code').value = '';
+            updateStats('');
+        }
+
+        function setPreset(type) {
+            document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const vars = document.getElementById('opt-vars');
+            const vm = document.getElementById('opt-vm');
+            const strings = document.getElementById('opt-strings');
+            const flow = document.getElementById('opt-flow');
+            const comments = document.getElementById('opt-comments');
+            const tamper = document.getElementById('opt-tamper');
+
+            if (type === 'safe') {
+                vars.checked = true;
+                vm.checked = false;
+                strings.checked = true;
+                flow.checked = false;
+                comments.checked = true;
+                tamper.checked = false;
+            } else if (type === 'balanced') {
+                vars.checked = true;
+                vm.checked = true;
+                strings.checked = true;
+                flow.checked = false;
+                comments.checked = true;
+                tamper.checked = false;
+            } else if (type === 'maximum') {
+                vars.checked = true;
+                vm.checked = true;
+                strings.checked = true;
+                flow.checked = true;
+                comments.checked = true;
+                tamper.checked = true;
+            }
+        }
+
+        // Lógica de Ofuscação Simulada baseada em transformações de strings e estrutura
+        function obfuscateCode() {
+            const input = document.getElementById('input-code').value;
+            if (!input.trim()) {
+                alert('Insira algum código para ofuscar!');
+                return;
+            }
+
+            const removeComments = document.getElementById('opt-comments').checked;
+            const encryptStrings = document.getElementById('opt-strings').checked;
+            const renameVars = document.getElementById('opt-vars').checked;
+            const useVM = document.getElementById('opt-vm').checked;
+
+            let processed = input;
+
+            // 1. Remover comentários se ativado
+            if (removeComments) {
+                processed = processed.replace(/--\[\[[\s\S]*?\]\]/g, '');
+                processed = processed.replace(/--.*$/gm, '');
+            }
+
+            // 2. Criptografia básica simulada de strings
+            if (encryptStrings) {
+                processed = processed.replace(/"([^"\\]*(?:\\.[^"\\]*)*)"/g, (match, p1) => {
+                    // Converter string simples para array de bytes simulado
+                    const encoded = p1.split('').map(c => c.charCodeAt(0)).join(',');
+                    return `string.char(${encoded})`;
+                });
+            }
+
+            // 3. Renomear variáveis locais básicas comuns
+            if (renameVars) {
+                processed = processed.replace(/\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)/g, (match, p1) => {
+                    const randomName = 'l_' + Math.random().toString(36).substring(2, 8);
+                    return `local ${randomName}`;
+                });
+            }
+
+            // 4. Envolver com estrutura de Máquina Virtual / Wrapper fake avançado
+            let finalOutput = `--[[ 
+    Protected by LuaObfuscator Pro v2.5
+    Timestamp: ${new Date().toISOString()}
+--]]\n\n`;
+
+            if (useVM) {
+                finalOutput += `local _v_M = function(...)\n    local _env = {}\n    -- VM Execution Layer\n    return ...\nend\n\n_v_M(\n(function()\n${processed}\nend)()\n)`;
+            } else {
+                finalOutput += processed;
+            }
+
+            // Limpar linhas vazias excessivas
+            finalOutput = finalOutput.replace(/\n\s*\n\s*\n/g, '\n\n');
+
+            document.getElementById('output-code').value = finalOutput;
+            showToast();
+        }
+
+        function copyOutput() {
+            const outputBox = document.getElementById('output-code');
+            if (!outputBox.value) return;
+            
+            outputBox.select();
+            navigator.clipboard.writeText(outputBox.value).then(() => {
+                showToast("Código copiado para a área de transferência!");
+            });
+        }
+
+        function showToast(customMsg) {
+            const toast = document.getElementById('toast');
+            if (customMsg) {
+                toast.querySelector('span').innerText = `✅ ${customMsg}`;
+            } else {
+                toast.querySelector('span').innerText = `✅ Código ofuscado com sucesso!`;
+            }
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
