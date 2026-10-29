@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tung Tung Sahur vs Br Br Patapim - Funkin' Style</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 800px;
+            height: 600px;
+            background: linear-gradient(135deg, #1f1c2c, #928DAB);
+            position: relative;
+            border: 6px solid #ffcc00;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Telas */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 15, 15, 0.95);
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ffcc00;
+            text-shadow: 4px 4px #ff0055, -2px -2px #00ffff;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #00ffff;
+            text-shadow: 2px 2px #ff0055;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #ddd;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .btn {
+            background-color: #ff0055;
+            color: white;
+            border: 4px solid #fff;
+            padding: 15px 35px;
+            font-size: 1.5rem;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 5px 0 #990033;
+            transition: transform 0.1s, background-color 0.2s;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background-color: #ff3377;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #990033;
+        }
+
+        /* Estilo do Jogo */
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.6);
+            z-index: 2;
+        }
+
+        .score-box, .health-box {
+            font-size: 1.2rem;
+            color: #ffcc00;
+            text-shadow: 2px 2px #000;
+        }
+
+        #health-bar-container {
+            width: 200px;
+            height: 20px;
+            background: #555;
+            border: 3px solid #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-left: 10px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #health-bar {
+            width: 50%;
+            height: 100%;
+            background: #00ff55;
+            transition: width 0.1s;
+        }
+
+        #stage {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: radial-gradient(circle, #333 0%, #111 100%);
+            overflow: hidden;
+        }
+
+        .character {
+            width: 150px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            background: #222;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            transition: transform 0.05s;
+        }
+
+        .char-name {
+            margin-top: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            border: 2px solid #ffcc00;
+        }
+
+        /* Área de Notas */
+        #track-area {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 4px dashed #ffcc00;
+        }
+
+        .receptor-lane {
+            display: flex;
+            gap: 20px;
+            position: relative;
+        }
+
+        .receptor {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.1s, transform 0.1s;
+        }
+
+        .receptor.pressed {
+            transform: scale(0.9);
+        }
+
+        /* Cores das Setas */
+        .receptor.left, .note.left { border-color: #ff0055; color: #ff0055; }
+        .receptor.down, .note.down { border-color: #00ffff; color: #00ffff; }
+        .receptor.up, .note.up { border-color: #00ff55; color: #00ff55; }
+        .receptor.right, .note.right { border-color: #ffcc00; color: #ffcc00; }
+
+        .receptor.left.active { background: #ff0055; color: white; box-shadow: 0 0 15px #ff0055; }
+        .receptor.down.active { background: #00ffff; color: white; box-shadow: 0 0 15px #00ffff; }
+        .receptor.up.active { background: #00ff55; color: white; box-shadow: 0 0 15px #00ff55; }
+        .receptor.right.active { background: #ffcc00; color: white; box-shadow: 0 0 15px #ffcc00; }
+
+        .note {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 4px solid;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(0,0,0,0.5);
+            top: -200px; /* Movido dinamicamente via JS */
+        }
+
+        #combo-popup {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: bold;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            text-shadow: 2px 2px #000;
+            z-index: 5;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .instructions {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 15px;
+        }
+
+        kbd {
+            background: #333;
+            border: 2px solid #777;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- TELA INICIAL -->
+        <div id="start-screen" class="screen">
+            <h1>Tung Tung Sahur<br>vs<br>Br Br Patapim</h1>
+            <p>Batalha de ritmo inspirada em Friday Night Funkin'! Aperte as setas no ritmo certo para derrotar o rival!</p>
+            <button class="btn" onclick="startGame()">JOGAR</button>
+            <div class="instructions">Use as setas do teclado: <kbd>←</kbd> <kbd>↓</kbd> <kbd>↑</kbd> <kbd>→</kbd></div>
+        </div>
+
+        <!-- TELA DE FIM DE JOGO -->
+        <div id="gameover-screen" class="screen hidden">
+            <h1 id="gameover-title">FIM DE JOGO</h1>
+            <p id="final-score">Pontuação final: 0</p>
+            <button class="btn" onclick="resetGame()">TENTAR NOVAMENTE</button>
+        </div>
+
+        <!-- HUD DO JOGO -->
+        <div id="hud">
+            <div class="score-box">PONTOS: <span id="score">0</span></div>
+            <div class="health-box">
+                BATIDA: 
+                <div id="health-bar-container">
+                    <div id="health-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PALCO -->
+        <div id="stage">
+            <div id="combo-popup">MANDOU BEM!</div>
+            
+            <!-- Personagem Jogador (Tung Tung Sahur) -->
+            <div class="character" id="player-char">
+                <div class="avatar" id="player-avatar">🥁</div>
+                <div class="char-name">Tung Tung Sahur</div>
+            </div>
+
+            <!-- Personagem Inimigo (Br Br Patapim) -->
+            <div class="character" id="enemy-char">
+                <div class="avatar" id="enemy-avatar">🎶</div>
+                <div class="char-name">Br Br Patapim</div>
+            </div>
+
+            <!-- Pista de Notas -->
+            <div id="track-area">
+                <div class="receptor-lane" id="receptors">
+                    <div class="receptor left" data-index="0">←</div>
+                    <div class="receptor down" data-index="1">↓</div>
+                    <div class="receptor up" data-index="2">↑</div>
+                    <div class="receptor right" data-index="3">→</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const arrows = ['left', 'down', 'up', 'ready', 'right'];
+        const keyMap = {
+            'ArrowLeft': 0,
+            'ArrowDown': 1,
+            'ArrowUp': 2,
+            'ArrowRight': 3,
+            'a': 0,
+            's': 1,
+            'w': 2,
+            'd': 3
+        };
+
+        const symbols = ['←', '↓', '↑', '→'];
+
+        let score = 0;
+        let health = 50; // 0 a 100
+        let isPlaying = false;
+        let notes = [];
+        let gameInterval;
+        let noteSpawner;
+        let songSpeed = 4;
+        let spawnRate = 1200; // ms
+        let lastSpawn = 0;
+
+        const startScreen = document.getElementById('start-screen');
+        const gameoverScreen = document.getElementById('gameover-screen');
+        const scoreDisplay = document.getElementById('score');
+        const healthBar = document.getElementById('health-bar');
+        const trackArea = document.getElementById('track-area');
+        const comboPopup = document.getElementById('combo-popup');
+        const playerAvatar = document.getElementById('player-avatar');
+        const enemyAvatar = document.getElementById('enemy-avatar');
+        const finalScoreText = document.getElementById('final-score');
+        const gameoverTitle = document.getElementById('gameover-title');
+
+        const receptors = document.querySelectorAll('.receptor');
+
+        function startGame() {
+            startScreen.classList.add('hidden');
+            gameoverScreen.classList.add('hidden');
+            score = 0;
+            health = 50;
+            notes = [];
+            isPlaying = true;
+            updateHUD();
+            
+            // Remove notas antigas se houver
+            document.querySelectorAll('.note').forEach(n => n.remove());
+
+            gameInterval = requestAnimationFrame(updateGame);
+            
+            // Iniciar gerador de notas ritmicas simuladas
+            lastSpawn = performance.now();
+        }
+
+        function updateHUD() {
+            scoreDisplay.innerText = score;
+            healthBar.style.width = health + '%';
+            if (health <= 0) {
+                endGame(false);
+            } else if (health >= 100) {
+                // Vitória por manter vida cheia
+                endGame(true);
+            }
+        }
+
+        function spawnNote() {
+            if (!isPlaying) return;
+            const lane = Math.floor(Math.random() * 4);
+            const noteEl = document.createElement('div');
+            noteEl.classList.add('note', ['left', 'down', 'up', 'right'][lane]);
+            noteEl.innerHTML = symbols[lane];
+            
+            // Posição inicial baseada na pista (alinhar com os receptores)
+            const receptorEl = receptors[lane];
+            noteEl.style.left = receptorEl.offsetLeft + 'px';
+            noteEl.style.top = '-60px';
+
+            trackArea.appendChild(noteEl);
+
+            notes.push({
+                element: noteEl,
+                lane: lane,
+                y: -60,
+                hit: false
+            });
+        }
+
+        let lastNoteTime = 0;
+        function updateGame(timestamp) {
+            if (!isPlaying) return;
+
+            if (timestamp - lastNoteTime > spawnRate) {
+                spawnNote();
+                lastNoteTime = timestamp;
+                // Deixar o jogo levemente mais rápido com o tempo
+                if (spawnRate > 600) spawnRate -= 5;
+            }
+
+            // Atualizar posição das notas
+            for (let i = notes.length - 1; i >= 0; i--) {
+                let note = notes[i];
+                note.y += songSpeed;
+                note.element.style.top = note.y + 'px';
+
+                // Checar se passou do ponto (miss automático)
+                if (note.y > 450 && !note.hit) {
+                    note.hit = true;
+                    note.element.remove();
+                    notes.splice(i, 1);
+                    applyDamage(8);
+                    showPopup("MISS!", "#ff0000");
+                }
+            }
+
+            gameInterval = requestAnimationFrame(updateGame);
+        }
+
+        function handleInput(lane, isPress) {
+            if (!isPlaying) return;
+
+            const receptor = receptors[lane];
+
+            if (isPress) {
+                receptor.classList.add('active', 'pressed');
+                
+                // Animar avatar do jogador levemente
+                playerAvatar.style.transform = `scale(1.1) rotate(${(lane - 1.5) * 5}deg)`;
+                setTimeout(() => playerAvatar.style.transform = 'scale(1) rotate(0deg)', 100);
+
+                // Procurar nota próxima na mesma pista
+                let hitIndex = -1;
+                let closestDist = 999;
+
+                for (let i = 0; i < notes.length; i++) {
+                    let note = notes[i];
+                    if (note.lane === lane && !note.hit) {
+                        let dist = Math.abs(note.y - 320); // 320 é a posição aproximada do receptor verticalmente
+                        if (dist < closestDist) {
+                            closestDist = dist;
+                            hitIndex = i;
+                        }
+                    }
+                }
+
+                if (hitIndex !== -1 && closestDist < 50) {
+                    // Acertou!
+                    let note = notes[hitIndex];
+                    note.hit = true;
+                    note.element.remove();
+                    notes.splice(hitIndex, 1);
+
+                    if (closestDist < 20) {
+                        score += 300;
+                        health = Math.min(100, health + 4);
+                        showPopup("BRILHANTE!", "#00ffff");
+                    } else if (closestDist < 35) {
+                        score += 150;
+                        health = Math.min(100, health + 2);
+                        showPopup("BOM!", "#00ff55");
+                    } else {
+                        score += 50;
+                        showPopup("REGULAR", "#ffcc00");
+                    }
+                    updateHUD();
+                } else {
+                    // Errou o timing / apertou vazio
+                    applyDamage(3);
+                }
+
+                // Inimigo responde de vez em quando para dar dinamismo
+                if (Math.random() < 0.3) {
+                    enemyAvatar.style.transform = `scale(1.1) rotate(${Math.random() * 10 - 5}deg)`;
+                    setTimeout(() => enemyAvatar.style.transform = 'scale(1) rotate(0deg)', 100);
+                }
+
+            } else {
+                receptor.classList.remove('active', 'pressed');
+            }
+        }
+
+        function applyDamage(amount) {
+            health = Math.max(0, health - amount);
+            updateHUD();
+        }
+
+        function showPopup(text, color) {
+            comboPopup.innerText = text;
+            comboPopup.style.color = color;
+            comboPopup.style.opacity = '1';
+            comboPopup.style.transform = 'translate(-50%, -80px) scale(1.2)';
+            setTimeout(() => {
+                comboPopup.style.opacity = '0';
+                comboPopup.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 250);
+        }
+
+        function endGame(victory) {
+            isPlaying = false;
+            cancelAnimationFrame(gameInterval);
+            
+            // Limpar notas restantes
+            document.querySelectorAll('.note').forEach(n => n.remove());
+
+            gameoverScreen.classList.remove('hidden');
+            if (victory) {
+                gameoverTitle.innerText = "VITÓRIA!";
+                gameoverTitle.style.color = "#00ff55";
+            } else {
+                gameoverTitle.innerText = "FIM DE JOGO!";
+                gameoverTitle.style.color = "#ff0055";
+            }
+            finalScoreText.innerText = `Pontuação final: ${score} - ${victory ? 'Tung Tung Sahur mandou muito!' : 'Br Br Patapim venceu!'}`;
+        }
+
+        function resetGame() {
+            spawnRate = 1200;
+            startGame();
+        }
+
+        // Event Listeners de Teclado
+        window.addEventListener('keydown', (e) => {
+            if (keyMap[e.key] !== undefined) {
+                handleInput(keyMap[e.key], true);
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (keyMap[e.key] !== undefined) {
+                handleInput(keyMap[e.key], false);
+            }
+        });
+
+        // Suporte a Toque/Mouse para dispositivos móveis ou cliques diretos
+        receptors.forEach((receptor, index) => {
+            receptor.addEventListener('mousedown', () => handleInput(index, true));
+            receptor.addEventListener('mouseup', () => handleInput(index, false));
+            receptor.addEventListener('mouseleave', () => handleInput(index, false));
+            
+            receptor.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleInput(index, true);
+            });
+            receptor.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleInput(index, false);
+            });
+        });
+    </script>
+</body>
+</html>
